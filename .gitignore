@@ -1,6 +1,8 @@
 node_modules/
+dist/
+.astro/
 temporary screenshots/
 package-lock.json
 review-screenshot.mjs
-
 .DS_Store
+.vercel

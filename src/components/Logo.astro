@@ -1,0 +1,135 @@
+---
+/**
+ * The That AI lockups, per brand_guidelines.md §2.3–2.5, Set 1 (dark surface).
+ *
+ * Rendered as inline SVG + live text rather than the supplied PNGs, because every Set 1 PNG has an
+ * opaque #0A0A0A background rather than transparency, so it cannot sit on the --surface-2 ground.
+ *
+ * Sizing is driven entirely by the wordmark's font-size, so the whole lockup scales with one number:
+ *   symbol drawn height = cap height × 1.5           (§2.4, as measured — see v2.1 changes doc)
+ *   symbol svg height   = drawn height × 116/108     (adds the round stroke caps)
+ *   clearspace          = cap height × 0.55          (measured; §2.4's "54 units" does not match)
+ *
+ * Vertical alignment is on the wordmark's CAP-HEIGHT MIDPOINT, not its baseline (§2.4). That is what
+ * the translateY below does: it lifts the symbol by half the gap between the text box centre and the
+ * cap-height centre.
+ */
+import {
+  ARC_PATH,
+  ARC_STROKE,
+  BAR_HALF_LENGTH,
+  BAR_STROKE,
+  DOT_RADIUS,
+  DM_SANS_CAP_RATIO,
+  CLEARSPACE_EM,
+  SYMBOL_OPTICAL_OFFSET_EM,
+  LOGO_COLOURS,
+  SYMBOL_DRAWN_HEIGHT,
+  SYMBOL_INK_SIZE,
+  SYMBOL_TO_CAP_RATIO,
+  SYMBOL_VIEWBOX,
+  WORDMARK,
+  type LogoVariant,
+} from '../lib/logo-geometry';
+import { site } from '../site.config';
+
+interface Props {
+  variant?: LogoVariant;
+  /** Wordmark font-size. Everything else is derived from it. Ignored when variant is 'symbol'. */
+  size?: string;
+  /** Symbol height when variant is 'symbol'. */
+  symbolSize?: string;
+  class?: string;
+  /** Set on the decorative copy inside a link that already has an accessible name. */
+  decorative?: boolean;
+}
+
+const {
+  variant = 'short',
+  size = 'var(--step-1)',
+  symbolSize = '1.5rem',
+  class: className,
+  decorative = false,
+} = Astro.props;
+
+const isSymbolOnly = variant === 'symbol';
+const wordmark = isSymbolOnly ? '' : WORDMARK[variant];
+const label = isSymbolOnly ? site.shortName : wordmark;
+
+// cap height = font-size × 0.700, so symbol ink height = font-size × 0.7 × 1.5 × (116/108)
+const symbolFactor =
+  (DM_SANS_CAP_RATIO * SYMBOL_TO_CAP_RATIO * SYMBOL_INK_SIZE) / SYMBOL_DRAWN_HEIGHT;
+---
+
+<span
+  class:list={['lockup', className, { 'lockup--symbol': isSymbolOnly }]}
+  style={`--wm-size:${size}; --sym-size:${symbolSize}; --sym-factor:${symbolFactor}; --clear-em:${CLEARSPACE_EM}; --optical-em:${SYMBOL_OPTICAL_OFFSET_EM};`}
+  role={decorative ? undefined : 'img'}
+  aria-label={decorative ? undefined : label}
+  aria-hidden={decorative ? 'true' : undefined}
+>
+  <svg class="lockup__symbol" viewBox={SYMBOL_VIEWBOX} fill="none" aria-hidden="true" focusable="false">
+    <g stroke-linecap="round" fill="none">
+      <path d={ARC_PATH.human} stroke={LOGO_COLOURS.human} stroke-width={ARC_STROKE} />
+      <path d={ARC_PATH.system} stroke={LOGO_COLOURS.system} stroke-width={ARC_STROKE} />
+    </g>
+    <path
+      d={`M ${-BAR_HALF_LENGTH} 0 H ${BAR_HALF_LENGTH}`}
+      stroke={LOGO_COLOURS.bridge}
+      stroke-width={BAR_STROKE}
+      stroke-linecap="butt"
+    />
+    <circle cx={-BAR_HALF_LENGTH} cy="0" r={DOT_RADIUS} fill={LOGO_COLOURS.bridge} />
+    <circle cx={BAR_HALF_LENGTH} cy="0" r={DOT_RADIUS} fill={LOGO_COLOURS.bridge} />
+  </svg>
+
+  {!isSymbolOnly && <span class="lockup__wordmark">{wordmark}</span>}
+</span>
+
+<style>
+  .lockup {
+    display: inline-flex;
+    align-items: center;
+    /* §2.4 clearspace, less the wordmark's left side bearing — see logo-geometry.ts. */
+    gap: calc(var(--wm-size) * var(--clear-em));
+    /* Minimum padding on all sides = terminal dot radius (7/116 of the symbol). */
+    padding: calc(var(--wm-size) * var(--sym-factor) * 0.06);
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .lockup__symbol {
+    display: block;
+    flex: none;
+    height: calc(var(--wm-size) * var(--sym-factor));
+    width: calc(var(--wm-size) * var(--sym-factor));
+    overflow: visible;
+    /*
+     * Align on the wordmark's cap-height midpoint, not the centre of its line box (§2.4).
+     * The offset is derived from DM Sans' real ascent/descent metrics in logo-geometry.ts.
+     */
+    transform: translateY(calc(var(--wm-size) * var(--optical-em)));
+  }
+
+  .lockup--symbol {
+    gap: 0;
+    padding: 0;
+  }
+
+  .lockup--symbol .lockup__symbol {
+    height: var(--sym-size);
+    width: var(--sym-size);
+    transform: none;
+  }
+
+  .lockup__wordmark {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--wm-size);
+    /* §4.1 as amended: the artwork is wide-tracked at +57/1000 em, not tight. */
+    letter-spacing: var(--track-wordmark);
+    color: var(--ink);
+    /* Trim the half-leading so the flex row centres on the glyphs, not the line box. */
+    line-height: 1;
+  }
+</style>

@@ -1,0 +1,18 @@
+---
+// TEMPORARY build-time harness for the step 4 logo overlay. Deleted before launch.
+import Logo from '../components/Logo.astro';
+import '../styles/fonts.css';
+import '../styles/tokens.css';
+---
+<html lang="en"><head><meta charset="utf-8" /><title>Logo check</title>
+<style>
+  body { background: var(--surface); margin: 0; padding: 40px; }
+  .row { margin-bottom: 48px; }
+  .swatch { background: var(--surface-2); padding: 24px; display: inline-block; }
+</style>
+</head><body>
+  <div class="row"><Logo variant="short" size="242.86px" /></div>
+  <div class="row"><Logo variant="long" size="242.86px" /></div>
+  <div class="row swatch"><Logo variant="short" size="32px" /></div>
+  <div class="row"><Logo variant="symbol" symbolSize="64px" /></div>
+</body></html>
