@@ -14,8 +14,14 @@
 - `serve.mjs` lives in the project root. Start it in the background before taking any screenshots.
 - If the server is already running, do not start a second instance.
 
+## Deploy Workflow — IMPORTANT
+- **All changes must be built and verified locally first.** Never push directly to GitHub without completing a local review.
+- Workflow: edit → serve locally → screenshot → review → fix → re-screenshot → confirm → then and only then push to GitHub.
+- Do not `git push` unless the user explicitly says to after reviewing the local version.
+- The live site (Vercel) deploys automatically on push to `main` — treat every push as a production deploy.
+
 ## Screenshot Workflow
-- Puppeteer is installed at `C:/Users/nateh/AppData/Local/Temp/puppeteer-test/`. Chrome cache is at `C:/Users/nateh/.cache/puppeteer/`.
+- Puppeteer is installed locally in `node_modules/`. Use system Chrome at `/Applications/Google Chrome.app/Contents/MacOS/Google Chrome` as `executablePath` — do not rely on the bundled Chromium.
 - **Always screenshot from localhost:** `node screenshot.mjs http://localhost:3000`
 - Screenshots are saved automatically to `./temporary screenshots/screenshot-N.png` (auto-incremented, never overwritten).
 - Optional label suffix: `node screenshot.mjs http://localhost:3000 label` → saves as `screenshot-N-label.png`
