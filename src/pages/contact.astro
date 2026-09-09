@@ -1,0 +1,170 @@
+---
+/**
+ * Brief §7: email, a calendar link if one exists, and a minimal form (name, email, what you're
+ * working on). If a calendar link exists, the form is secondary.
+ *
+ * The form posts to the mail provider named in site.config. While bookingUrl is a placeholder the
+ * CTA falls back to mailto:, and the form's action is a mailto: too — a static build has no
+ * backend, and a form that silently discards submissions would be worse than no form.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Cta from '../components/Cta.astro';
+import { contact } from '../site.config';
+
+const hasBooking = contact.bookingUrl !== null;
+---
+
+<BaseLayout
+  title="Contact"
+  description="Book a first call, or send a line about what you're working on."
+>
+  <div class="u-container">
+    <header class="page-header">
+      <h1>Contact</h1>
+      <p class="page-header__lead">
+        One call is enough to work out whether this fits. If it doesn't, we'll say so.
+      </p>
+    </header>
+
+    <div class="contact">
+      <section class="contact__primary" aria-labelledby="book">
+        <h2 id="book" class="contact__heading">Book a call</h2>
+        <p class="contact__body">
+          {
+            hasBooking
+              ? 'Pick a time that suits you. Thirty minutes, no preparation needed.'
+              : 'Email is the fastest way to reach us. Thirty minutes, no preparation needed.'
+          }
+        </p>
+        <Cta />
+
+        <p class="contact__direct">
+          Or write directly: <a href={`mailto:${contact.email}`}>{contact.email}</a>
+        </p>
+      </section>
+
+      <section class="contact__secondary" aria-labelledby="form-heading">
+        <h2 id="form-heading" class="contact__heading">Send a line</h2>
+
+        <form class="form" action={`mailto:${contact.email}`} method="post" enctype="text/plain">
+          <p class="field">
+            <label class="field__label" for="name">Name</label>
+            <input class="field__input" type="text" id="name" name="name" required />
+          </p>
+
+          <p class="field">
+            <label class="field__label" for="email">Email</label>
+            <input class="field__input" type="email" id="email" name="email" required />
+          </p>
+
+          <p class="field">
+            <label class="field__label" for="project">What you're working on</label>
+            <textarea class="field__input" id="project" name="project" rows="5" required></textarea>
+          </p>
+
+          <button class="form__submit" type="submit">Send</button>
+        </form>
+      </section>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-header {
+    display: grid;
+    gap: var(--space-5);
+    padding-block: var(--space-20) var(--space-12);
+    max-width: var(--measure-wide);
+  }
+
+  .page-header__lead {
+    font-size: var(--step-1);
+    color: var(--ink-dim);
+  }
+
+  .contact {
+    display: grid;
+    gap: var(--space-16);
+    padding-block-end: var(--section-y);
+  }
+
+  .contact__heading {
+    font-size: var(--step-2);
+    margin-block-end: var(--space-4);
+  }
+
+  .contact__body {
+    color: var(--ink-dim);
+    margin-block-end: var(--space-6);
+    max-width: var(--measure);
+  }
+
+  .contact__direct {
+    margin-block-start: var(--space-6);
+    font-size: var(--step--1);
+    color: var(--ink-muted);
+  }
+
+  .form {
+    display: grid;
+    gap: var(--space-5);
+    max-width: var(--measure);
+  }
+
+  .field {
+    display: grid;
+    gap: var(--space-2);
+    margin: 0;
+  }
+
+  .field__label {
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    letter-spacing: var(--track-mono);
+    color: var(--ink-muted);
+  }
+
+  .field__input {
+    width: 100%;
+    padding: var(--space-3);
+    font: inherit;
+    color: var(--ink);
+    background: var(--surface-2);
+    border: var(--border-width) solid var(--border);
+    border-radius: var(--radius-md);
+    transition: border-color var(--dur-fast) var(--ease);
+  }
+
+  .field__input:hover {
+    border-color: var(--border-strong);
+  }
+
+  .field__input:focus-visible {
+    border-color: var(--accent);
+  }
+
+  .form__submit {
+    justify-self: start;
+    padding: var(--space-3) var(--space-6);
+    font-weight: 500;
+    color: var(--ink);
+    background: transparent;
+    border: var(--border-width) solid var(--border-strong);
+    border-radius: var(--radius-md);
+    transition:
+      border-color var(--dur-fast) var(--ease),
+      color var(--dur-fast) var(--ease);
+  }
+
+  .form__submit:hover {
+    color: var(--accent);
+    border-color: var(--border-accent);
+  }
+
+  @media (min-width: 1024px) {
+    .contact {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-16);
+    }
+  }
+</style>

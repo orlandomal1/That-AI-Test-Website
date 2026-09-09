@@ -15,7 +15,7 @@
     "shot:all": "node screenshot.mjs --all",
     "shot:mobile": "node screenshot.mjs --all --mobile",
     "lint:tokens": "node scripts/check-tokens.mjs",
-    "leaktest": "node scripts/leak-test.mjs"
+    "leaktest": "node --experimental-strip-types scripts/leak-test.mjs"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",

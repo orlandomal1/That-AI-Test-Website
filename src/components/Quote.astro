@@ -1,0 +1,48 @@
+---
+/**
+ * Testimonial. Always rendered inside <Approved>, so reaching this component at all means the
+ * quote has been signed off.
+ */
+import { resolve } from '../lib/approvals';
+import type { ApprovalKey } from '../site.config';
+
+interface Props {
+  name: ApprovalKey;
+  attribution?: string;
+}
+
+const { name, attribution } = Astro.props;
+const text = resolve(name);
+---
+
+{
+  text && (
+    <figure class="quote">
+      <blockquote class="quote__text">{text}</blockquote>
+      {attribution && <figcaption class="quote__by">{attribution}</figcaption>}
+    </figure>
+  )
+}
+
+<style>
+  .quote {
+    margin: 0;
+    padding-inline-start: var(--space-6);
+    border-inline-start: 2px solid var(--accent);
+  }
+
+  .quote__text {
+    margin: 0;
+    font-size: var(--step-1);
+    line-height: var(--lead-snug);
+    color: var(--ink);
+  }
+
+  .quote__by {
+    margin-block-start: var(--space-3);
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    letter-spacing: var(--track-mono);
+    color: var(--ink-muted);
+  }
+</style>

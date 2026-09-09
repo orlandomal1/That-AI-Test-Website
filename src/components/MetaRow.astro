@@ -1,0 +1,55 @@
+---
+/** Brief §4 header: "Sector · Engagement type · Duration · Status". */
+import { interpolate, type TokenContext } from '../lib/approvals';
+
+interface Props {
+  meta: { label: string; value: string }[];
+  ctx: TokenContext;
+}
+
+const { meta, ctx } = Astro.props;
+---
+
+<dl class="meta">
+  {
+    meta.map((item) => (
+      <div class="meta__item">
+        <dt class="meta__label">{item.label}</dt>
+        <dd class="meta__value">{interpolate(item.value, ctx)}</dd>
+      </div>
+    ))
+  }
+</dl>
+
+<style>
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    /* No interpunct separators: on a wrapped row one strands at the start of the next line.
+       The label:value pairs already delimit themselves. */
+    gap: var(--space-2) var(--space-8);
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    letter-spacing: var(--track-mono);
+  }
+
+  .meta__item {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+  }
+
+  .meta__label {
+    color: var(--ink-muted);
+  }
+
+  .meta__label::after {
+    content: ':';
+  }
+
+  .meta__value {
+    margin: 0;
+    color: var(--ink);
+  }
+</style>

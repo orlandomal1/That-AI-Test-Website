@@ -1,0 +1,76 @@
+---
+/**
+ * Brief §4: "a full-width visual break. Two or three of our own lines set large. This is brand
+ * voice; treat it as a design element, not a quote block."
+ *
+ * So: no quote marks, no attribution, no card. A change of ground and a jump in type size, with the
+ * bridge bar as the only ornament.
+ */
+import { interpolate, type TokenContext } from '../lib/approvals';
+
+interface Props {
+  lines: string[];
+  ctx: TokenContext;
+}
+
+const { lines, ctx } = Astro.props;
+---
+
+<aside class="callout">
+  <div class="u-container u-container--wide">
+    <ul class="callout__list">
+      {lines.map((line) => <li class="callout__line">{interpolate(line, ctx)}</li>)}
+    </ul>
+  </div>
+</aside>
+
+<style>
+  .callout {
+    /* Full-bleed break out of the article column. */
+    background: var(--surface-2);
+    border-block: var(--border-width) solid var(--border);
+    padding-block: var(--section-y);
+    margin-block: var(--space-16);
+  }
+
+  .callout__list {
+    display: grid;
+    gap: var(--space-8);
+  }
+
+  .callout__line {
+    position: relative;
+    max-width: 24ch;
+    padding-inline-start: var(--space-8);
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: var(--step-3);
+    line-height: var(--lead-snug);
+    letter-spacing: var(--track-tight);
+    color: var(--ink);
+    text-wrap: balance;
+  }
+
+  /* The bridge bar, reduced to a rule. Sanctioned use of cyan. */
+  .callout__line::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0;
+    inset-block-start: 0.55em;
+    width: var(--space-5);
+    height: 2px;
+    background: var(--accent);
+  }
+
+  @media (min-width: 1024px) {
+    .callout__list {
+      grid-auto-flow: column;
+      grid-auto-columns: 1fr;
+      gap: var(--space-12);
+    }
+
+    .callout__line {
+      max-width: none;
+    }
+  }
+</style>

@@ -1,0 +1,148 @@
+order: 1
+clientKey: client_halcyon
+
+h1: "{client:sentence}"
+
+meta:
+  - label: Sector
+    value: Travel
+  - label: Engagement
+    value: Operations automation
+  - label: Duration
+    value: June–September 2026
+  - label: Status
+    value: Go-live in progress
+
+stack:
+  - Monday.com
+  - WeTravel
+  - Python
+  - FastAPI
+  - Postgres
+  - Railway
+
+card:
+  problem: Every trip quote was built twice.
+  result: Now it's one click and ten seconds.
+
+seo:
+  title: Operations automation for {client:lower}
+  description: >-
+    How {client:lower} stopped building every trip quote twice — once on a Monday.com board, once
+    by hand as a client-facing WeTravel page. Now it's one click and about ten seconds.
+  ogTitle: Every trip quote was built twice
+
+problem:
+  heading: The problem
+  body:
+    - >-
+      Every trip quote was built twice. The team built each trip on a Monday.com board (pricing, tee
+      times, hotels, transfers, dinners), then rebuilt the same information by hand as a
+      client-facing WeTravel trip page. Every revision meant editing both. When a client booked and
+      paid, someone copied traveller details and payment figures back onto the board by hand.
+      Against a content library of 889 entries and a course universe of roughly 600 venues, the
+      manual process had already produced drift: the same property existed under two spellings.
+
+visual:
+  kind: before-after
+  before:
+    eyebrow: Before
+    nodes:
+      - Monday board
+      - WeTravel page
+    ariaLabel: >-
+      Before: the Monday board and the WeTravel page sat as two separate systems, with information
+      copied by hand in both directions.
+  after:
+    eyebrow: After
+    nodes:
+      - Monday board
+      - WeTravel page
+    flowRight: Generate
+    flowLeft: Bookings
+    ariaLabel: >-
+      After: the two systems are joined by a bridge. Trip pages generate from the board in one
+      direction, and booking data flows back onto the board in the other.
+
+built:
+  heading: What we built
+  items:
+    - name: One-click trip generation
+      body: >-
+        A “Generate” button on each Monday board creates or updates the complete client-facing trip
+        page in about ten seconds: packages and pricing, day-by-day photo itinerary, checkout
+        questionnaire.
+      replaced: the manual rebuild entirely.
+
+    - name: Photo itinerary builder
+      body: >-
+        Composes each day from the operator's own content library — course, hotel, dinner and
+        activity slides, tee times, transfer pickups with driver contact. Conditional sections
+        appear only when relevant (ballot guidance only on St Andrews trips, for example).
+        Deterministic: the same board always produces the same page.
+      replaced: hand-assembled itineraries.
+
+    - name: Booking writeback
+      body: >-
+        When a client books and pays, traveller rows and per-traveller payment rows appear on the
+        Monday board within seconds; later payments update in place.
+      replaced: manual copying of booking data.
+
+    - name: Operations dashboard
+      body: >-
+        Trips, bookings, a full audit log of every action the system takes, and a kill switch that
+        pauses all automation without losing events.
+
+  closing: >-
+    Before any feature was built against the platform, we measured how it actually behaves on
+    throwaway objects. Every change is previewed offline before it touches a client-facing page.
+    The system has 1,378 automated tests and had zero client-facing incidents during the build.
+
+howItRan:
+  heading: How it ran
+  body:
+    - >-
+      Fixed price, three phases, each invoiced on sign-off. Few meetings: kick-off, a mid-build
+      walkthrough that reshaped the itinerary design, a demo, and one feedback session. Commercial
+      decisions were batched into short written decision lists rather than calls. The client's GM
+      owned content and board conventions; everything technical was ours. Client-requested layout
+      changes from the feedback session were live on the demo within 48 hours.
+    - >-
+      During the build we became a beta partner on WeTravel's new Itinerary API; the platform
+      shipped improvements, including a read endpoint, in response to our testing.
+
+outcomes:
+  heading: Outcomes
+  items:
+    - >-
+      Trip page creation and every revision: one click, about ten seconds, from the board the team
+      already uses.
+    - Booking data on the board within seconds of payment, verified against real bookings.
+    - Phase 2 accepted at demo; client feedback moved directly to layout preferences.
+    - >-
+      WeTravel shipped API improvements in response to our beta feedback, acknowledged in writing by
+      their engineering team.
+    - 1,378 automated tests; zero client-facing incidents during the build.
+  footnote: Updated as go-live results land.
+
+principles:
+  lines:
+    - The board is the source of truth. The trip page is a rendering of it.
+    - >-
+      A wrong hotel on a client-facing page is worse than a plain one, so the system under-matches
+      rather than guesses.
+
+whoThisSuits:
+  heading: Who this suits
+  items:
+    - "Tour operators on any board-plus-booking-platform stack: safari, ski, cycling, wine."
+    - Event and retreat companies quoting bespoke itineraries.
+    - Any operator whose quotes are built twice and whose booking data is retyped by hand.
+
+cta:
+  heading: Are your quotes built twice?
+  label: Book a call
+
+testimonials:
+  - quote_wetravel
+  - quote_halcyon

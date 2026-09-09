@@ -1,0 +1,24 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CaseStudyLayout from '../../layouts/CaseStudyLayout.astro';
+import { interpolate, type TokenContext } from '../../lib/approvals';
+
+export async function getStaticPaths() {
+  const studies = await getCollection('work');
+  return studies.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+
+// One token context per study, built from the schema and passed down. Every string on the page
+// resolves through this, including the metadata below.
+const ctx: TokenContext = { client: entry.data.clientKey, ...entry.data.tokens };
+---
+
+<BaseLayout
+  title={interpolate(entry.data.seo.title, ctx)}
+  description={interpolate(entry.data.seo.description, ctx)}
+>
+  <CaseStudyLayout entry={entry} ctx={ctx} />
+</BaseLayout>

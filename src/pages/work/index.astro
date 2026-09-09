@@ -1,0 +1,68 @@
+---
+/** Brief §7: index of the two case studies, same cards as the proof strip at larger size. No filters. */
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CaseCard from '../../components/CaseCard.astro';
+import type { TokenContext } from '../../lib/approvals';
+
+const studies = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<BaseLayout
+  title="Work"
+  description="Two engagements: operations automation for a travel operator, and prototype-to-RFP for a sport and leisure operator."
+>
+  <div class="u-container u-container--wide">
+    <header class="page-header">
+      <h1>Work</h1>
+      <p class="page-header__lead">
+        Two engagements. Both start the same way: measure what the platforms actually do, then build
+        only what survives that.
+      </p>
+    </header>
+
+    <div class="grid">
+      {
+        studies.map((entry) => {
+          const ctx: TokenContext = { client: entry.data.clientKey, ...entry.data.tokens };
+          return (
+            <CaseCard
+              href={`/work/${entry.id}`}
+              descriptor={entry.data.h1}
+              problem={entry.data.card.problem}
+              result={entry.data.card.result}
+              ctx={ctx}
+              size="large"
+            />
+          );
+        })
+      }
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-header {
+    display: grid;
+    gap: var(--space-5);
+    padding-block: var(--space-20) var(--space-12);
+    max-width: var(--measure-wide);
+  }
+
+  .page-header__lead {
+    font-size: var(--step-1);
+    color: var(--ink-dim);
+  }
+
+  .grid {
+    display: grid;
+    gap: var(--space-6);
+    padding-block-end: var(--section-y);
+  }
+
+  @media (min-width: 1024px) {
+    .grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>

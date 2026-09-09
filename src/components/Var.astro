@@ -1,0 +1,29 @@
+---
+/**
+ * Inline approval variable. Renders the anonymised default until the entry is approved.
+ *
+ * Never write a client name directly into markup — use this, or a {token} in a content file.
+ * The data-approval attribute is deliberate: it makes an unresolved variable greppable in the
+ * built output during QA.
+ */
+import { isBlockOnly, resolve, type ResolveOptions } from '../lib/approvals';
+import type { ApprovalKey } from '../site.config';
+
+interface Props {
+  name: ApprovalKey;
+  case?: ResolveOptions['case'];
+}
+
+const { name, case: casing } = Astro.props;
+
+if (isBlockOnly(name)) {
+  throw new Error(
+    `[approvals] <Var name="${name}" /> is block-only (hideWhenUnapproved). ` +
+      `Inline use would render an empty string mid-sentence. Use <Approved name="${name}"> instead.`,
+  );
+}
+
+const value = resolve(name, casing ? { case: casing } : {});
+---
+
+<span data-approval={name}>{value}</span>

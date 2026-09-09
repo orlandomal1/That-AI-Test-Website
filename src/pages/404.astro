@@ -1,0 +1,29 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Cta from '../components/Cta.astro';
+---
+
+<BaseLayout title="Page not found" description="That page doesn't exist." noindex>
+  <div class="u-container notfound">
+    <p class="u-label">404</p>
+    <h1>That page doesn't exist.</h1>
+    <p class="notfound__body">
+      Try <a href="/work">the work</a>, <a href="/services">the services</a>, or get in touch.
+    </p>
+    <Cta />
+  </div>
+</BaseLayout>
+
+<style>
+  .notfound {
+    display: grid;
+    justify-items: start;
+    gap: var(--space-5);
+    padding-block: var(--space-32);
+  }
+
+  .notfound__body {
+    color: var(--ink-dim);
+    margin-block-end: var(--space-4);
+  }
+</style>

@@ -1,0 +1,174 @@
+/**
+ * Reset, base element typography, and a small set of layout primitives.
+ * Every value here resolves to a token from tokens.css. Nothing is hard-coded.
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--surface);
+  color: var(--ink-dim);
+  font-family: var(--font-body);
+  font-size: var(--step-0);
+  line-height: var(--lead-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 800;
+  color: var(--ink);
+  line-height: var(--lead-tight);
+  letter-spacing: var(--track-tight);
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: var(--step-6);
+}
+h2 {
+  font-size: var(--step-4);
+}
+h3 {
+  font-size: var(--step-2);
+  font-weight: 700;
+  letter-spacing: var(--track-snug);
+  line-height: var(--lead-snug);
+}
+h4 {
+  font-size: var(--step-1);
+  font-weight: 700;
+  letter-spacing: var(--track-snug);
+  line-height: var(--lead-snug);
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: var(--accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  transition: color var(--dur-fast) var(--ease);
+}
+
+a:hover {
+  color: var(--accent-deep);
+}
+
+:where(a, button, input, textarea, summary):focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--surface);
+}
+
+/* ── Layout primitives ─────────────────────────────────────────────────── */
+
+.u-container {
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.u-container--wide {
+  max-width: var(--container-wide);
+}
+
+/* Vertical rhythm between page sections. */
+.u-section {
+  padding-block: var(--section-y);
+}
+
+/* Owl selector: consistent flow spacing without margin collapse surprises. */
+.u-stack > * + * {
+  margin-block-start: var(--stack-gap, var(--space-4));
+}
+
+.u-measure {
+  max-width: var(--measure);
+}
+
+.u-measure-wide {
+  max-width: var(--measure-wide);
+}
+
+/* Small mono label above a section heading. */
+.u-label {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  font-weight: 400;
+  letter-spacing: var(--track-mono);
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.u-skip-link {
+  position: absolute;
+  left: var(--space-4);
+  top: var(--space-4);
+  z-index: 100;
+  padding: var(--space-2) var(--space-4);
+  background: var(--surface-2);
+  color: var(--ink);
+  border: var(--border-width) solid var(--border-accent);
+  border-radius: var(--radius-md);
+  transform: translateY(-200%);
+}
+
+.u-skip-link:focus-visible {
+  transform: translateY(0);
+}
+
+.u-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

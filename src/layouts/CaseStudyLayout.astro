@@ -1,0 +1,298 @@
+---
+/**
+ * One layout, both case studies. Brief §4: "One component, one layout."
+ *
+ * The section order is hard-coded here and cannot be changed from a content file:
+ *   Header → The problem → visual → What we built → How it ran → Outcomes
+ *   → Principles callout → Who this suits → CTA → testimonial slot
+ */
+import type { CollectionEntry } from 'astro:content';
+import { interpolate, type TokenContext } from '../lib/approvals';
+import Approved from '../components/Approved.astro';
+import BridgeDiagram from '../components/BridgeDiagram.astro';
+import Cta from '../components/Cta.astro';
+import MetaRow from '../components/MetaRow.astro';
+import PrinciplesCallout from '../components/PrinciplesCallout.astro';
+import Prose from '../components/Prose.astro';
+import Quote from '../components/Quote.astro';
+import StackTags from '../components/StackTags.astro';
+
+interface Props {
+  entry: CollectionEntry<'work'>;
+  ctx: TokenContext;
+}
+
+const { entry, ctx } = Astro.props;
+const d = entry.data;
+const t = (text: string) => interpolate(text, ctx);
+
+// Hoisted so the discriminated union narrows — TypeScript will not keep the narrowing across the
+// property accesses inside the JSX callbacks below.
+const visual = d.visual;
+---
+
+<article class="study">
+  <header class="study__header u-container">
+    <h1 class="study__title">{t(d.h1)}</h1>
+    <MetaRow meta={d.meta} ctx={ctx} />
+    <StackTags stack={d.stack} />
+  </header>
+
+  <section class="study__section u-container" aria-labelledby="problem">
+    <h2 id="problem" class="study__heading">{d.problem.heading}</h2>
+    <Prose body={d.problem.body} ctx={ctx} />
+  </section>
+
+  <div class="study__visual u-container u-container--wide">
+    {
+      visual.kind === 'before-after' && (
+        <div class="study__ba">
+          <BridgeDiagram
+            eyebrow={visual.before.eyebrow}
+            ariaLabel={visual.before.ariaLabel}
+            nodes={visual.before.nodes.map((label) => ({ label }))}
+            links={[{ variant: 'manual', direction: 'both' }]}
+          />
+          <BridgeDiagram
+            eyebrow={visual.after.eyebrow}
+            ariaLabel={visual.after.ariaLabel}
+            nodes={visual.after.nodes.map((label) => ({ label }))}
+            links={[
+              {
+                variant: 'bridge',
+                direction: 'both',
+                labels: [
+                  { text: visual.after.flowRight, direction: 'right' },
+                  { text: visual.after.flowLeft, direction: 'left' },
+                ],
+              },
+            ]}
+          />
+        </div>
+      )
+    }
+
+    {
+      visual.kind === 'flow' && (
+        <BridgeDiagram
+          ariaLabel={visual.ariaLabel}
+          caption={visual.caption}
+          nodes={visual.nodes.map((label, i) => ({
+            label,
+            tone: i === visual.accentIndex ? 'accent' : 'default',
+          }))}
+          links={visual.nodes
+            .slice(1)
+            .map((_, i) => ({ variant: i === 0 ? 'bridge' : 'arrow', direction: 'right' }))}
+        />
+      )
+    }
+  </div>
+
+  <section class="study__section u-container" aria-labelledby="built">
+    <h2 id="built" class="study__heading">{d.built.heading}</h2>
+
+    <ol class="built">
+      {
+        d.built.items.map((item) => (
+          <li class="built__item">
+            <h3 class="built__name">{item.name}</h3>
+            <p class="built__body">{t(item.body)}</p>
+            {item.replaced && (
+              <p class="built__replaced">
+                <span class="built__replaced-label">Replaced:</span> {t(item.replaced)}
+              </p>
+            )}
+          </li>
+        ))
+      }
+    </ol>
+
+    <p class="built__closing">{t(d.built.closing)}</p>
+  </section>
+
+  <section class="study__section u-container" aria-labelledby="howitran">
+    <h2 id="howitran" class="study__heading">{d.howItRan.heading}</h2>
+    <Prose body={d.howItRan.body} ctx={ctx} />
+  </section>
+
+  <section class="study__section u-container" aria-labelledby="outcomes">
+    <h2 id="outcomes" class="study__heading">{d.outcomes.heading}</h2>
+    <ul class="outcomes">
+      {d.outcomes.items.map((item) => <li class="outcomes__item">{t(item)}</li>)}
+    </ul>
+    {d.outcomes.footnote && <p class="outcomes__note">{t(d.outcomes.footnote)}</p>}
+  </section>
+
+  <PrinciplesCallout lines={d.principles.lines} ctx={ctx} />
+
+  <section class="study__section u-container" aria-labelledby="suits">
+    <h2 id="suits" class="study__heading">{d.whoThisSuits.heading}</h2>
+    <ul class="suits">
+      {d.whoThisSuits.items.map((item) => <li class="suits__item">{t(item)}</li>)}
+    </ul>
+
+    <div class="study__cta">
+      <p class="study__cta-heading">{t(d.cta.heading)}</p>
+      <Cta label={d.cta.label} />
+    </div>
+  </section>
+
+  {
+    d.testimonials.length > 0 && (
+      <section class="study__section u-container">
+        {d.testimonials.map((key) => (
+          <Approved name={key}>
+            <Quote name={key} />
+          </Approved>
+        ))}
+      </section>
+    )
+  }
+</article>
+
+<style>
+  .study__header {
+    padding-block: var(--space-20) var(--space-12);
+    display: grid;
+    gap: var(--space-6);
+    justify-items: start;
+  }
+
+  .study__title {
+    font-size: var(--step-5);
+    max-width: 18ch;
+  }
+
+  .study__section {
+    padding-block: var(--space-10);
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  .study__heading {
+    font-size: var(--step-3);
+  }
+
+  .study__visual {
+    padding-block: var(--space-10);
+  }
+
+  .study__ba {
+    display: grid;
+    gap: var(--space-12);
+  }
+
+  /* ── What we built ─────────────────────────────────────────────────── */
+  .built {
+    display: grid;
+    gap: var(--space-8);
+    counter-reset: built;
+    max-width: var(--measure-wide);
+  }
+
+  .built__item {
+    display: grid;
+    gap: var(--space-2);
+    padding-inline-start: var(--space-8);
+    position: relative;
+    counter-increment: built;
+  }
+
+  .built__item::before {
+    content: counter(built, decimal-leading-zero);
+    position: absolute;
+    inset-inline-start: 0;
+    inset-block-start: 0.15em;
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    color: var(--accent);
+  }
+
+  .built__name {
+    font-size: var(--step-1);
+  }
+
+  .built__body {
+    color: var(--ink-dim);
+  }
+
+  .built__replaced {
+    font-size: var(--step--1);
+    color: var(--ink-muted);
+  }
+
+  .built__replaced-label {
+    font-family: var(--font-mono);
+    letter-spacing: var(--track-mono);
+    color: var(--ink-dim);
+  }
+
+  .built__closing {
+    max-width: var(--measure-wide);
+    padding-block-start: var(--space-4);
+    border-block-start: var(--border-width) solid var(--border);
+    color: var(--ink-dim);
+  }
+
+  /* ── Outcomes & who this suits ─────────────────────────────────────── */
+  .outcomes,
+  .suits {
+    display: grid;
+    gap: var(--space-4);
+    max-width: var(--measure-wide);
+  }
+
+  .outcomes__item,
+  .suits__item {
+    position: relative;
+    padding-inline-start: var(--space-6);
+    color: var(--ink-dim);
+  }
+
+  .outcomes__item::before,
+  .suits__item::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0;
+    inset-block-start: 0.62em;
+    width: var(--space-3);
+    height: 2px;
+    background: var(--accent);
+  }
+
+  .outcomes__note {
+    font-style: italic;
+    font-size: var(--step--1);
+    color: var(--ink-muted);
+  }
+
+  /* ── CTA ───────────────────────────────────────────────────────────── */
+  .study__cta {
+    display: grid;
+    justify-items: start;
+    gap: var(--space-5);
+    margin-block-start: var(--space-10);
+    padding-block-start: var(--space-10);
+    border-block-start: var(--border-width) solid var(--border);
+  }
+
+  .study__cta-heading {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--step-2);
+    letter-spacing: var(--track-snug);
+    color: var(--ink);
+  }
+
+  /*
+   * 1280, not 1024: below this each half is too narrow for a horizontal two-box diagram, and the
+   * before/after comparison reads better stacked full-width than as two vertical diagrams.
+   */
+  @media (min-width: 1280px) {
+    .study__ba {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-16);
+    }
+  }
+</style>

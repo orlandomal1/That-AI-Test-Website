@@ -1,0 +1,114 @@
+---
+/**
+ * Brief §3: long lockup, tagline, email, LinkedIn, company registration line.
+ * The long lockup is reserved for exactly this context per guidelines §2.3 and §7.
+ */
+import Logo from './Logo.astro';
+import { contact, site } from '../site.config';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="footer__inner u-container u-container--wide">
+    <div class="footer__brand">
+      <Logo variant="long" size="var(--step-1)" decorative />
+      <p class="footer__tagline">{site.tagline}</p>
+    </div>
+
+    <nav class="footer__contact" aria-label="Contact">
+      <ul class="footer__links">
+        <li><a href={`mailto:${contact.email}`}>{contact.email}</a></li>
+        <li>
+          <a href={contact.linkedin} rel="me noopener">LinkedIn</a>
+        </li>
+      </ul>
+    </nav>
+
+    <p class="footer__reg">{contact.companyReg}</p>
+    <p class="footer__copy">&copy; {year} {site.name}</p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    border-block-start: var(--border-width) solid var(--border);
+    background: var(--surface);
+  }
+
+  .footer__inner {
+    display: grid;
+    gap: var(--space-8);
+    padding-block: var(--space-16) var(--space-10);
+    grid-template-areas:
+      'brand contact'
+      'reg   copy';
+    grid-template-columns: 1fr auto;
+    align-items: start;
+  }
+
+  .footer__brand {
+    grid-area: brand;
+  }
+
+  .footer__tagline {
+    margin-block-start: var(--space-3);
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    letter-spacing: var(--track-mono);
+    color: var(--ink-muted);
+  }
+
+  .footer__contact {
+    grid-area: contact;
+  }
+
+  .footer__links {
+    display: grid;
+    gap: var(--space-2);
+    justify-items: end;
+    font-size: var(--step--1);
+  }
+
+  .footer__links a {
+    text-decoration: none;
+  }
+
+  .footer__links a:hover {
+    text-decoration: underline;
+  }
+
+  .footer__reg {
+    grid-area: reg;
+    font-size: var(--step--2);
+    color: var(--ink-muted);
+    max-width: var(--measure);
+  }
+
+  .footer__copy {
+    grid-area: copy;
+    font-size: var(--step--2);
+    color: var(--ink-muted);
+    text-align: end;
+  }
+
+  @media (max-width: 640px) {
+    .footer__inner {
+      grid-template-areas:
+        'brand'
+        'contact'
+        'reg'
+        'copy';
+      grid-template-columns: 1fr;
+      gap: var(--space-6);
+    }
+
+    .footer__links {
+      justify-items: start;
+    }
+
+    .footer__copy {
+      text-align: start;
+    }
+  }
+</style>

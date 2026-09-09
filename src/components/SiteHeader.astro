@@ -1,0 +1,117 @@
+---
+/**
+ * Brief §3: short lockup left; Work, Services, About right; single cyan CTA "Book a call".
+ *
+ * No JavaScript. Below the 1024px breakpoint the links sit on their own row under the lockup
+ * rather than behind a toggle — there are only three of them, and a burger menu would need client
+ * JS on a site that otherwise ships none.
+ */
+import Logo from './Logo.astro';
+import Cta from './Cta.astro';
+
+const links = [
+  { href: '/work', label: 'Work' },
+  { href: '/services', label: 'Services' },
+  { href: '/about', label: 'About' },
+];
+
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isCurrent = (href: string) => path === href || path.startsWith(`${href}/`);
+---
+
+<header class="header">
+  <div class="header__inner u-container u-container--wide">
+    <a class="header__brand" href="/" aria-label="That AI — home">
+      <Logo variant="short" size="var(--step-1)" decorative />
+    </a>
+
+    <nav class="header__nav" aria-label="Primary">
+      <ul class="header__links">
+        {
+          links.map((link) => (
+            <li>
+              <a
+                href={link.href}
+                class="header__link"
+                aria-current={isCurrent(link.href) ? 'page' : undefined}
+              >
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <Cta class="header__cta" />
+  </div>
+</header>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: color-mix(in srgb, var(--surface) 88%, transparent);
+    backdrop-filter: blur(10px);
+    border-block-end: var(--border-width) solid var(--border);
+  }
+
+  .header__inner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+    min-height: var(--header-h);
+    padding-block: var(--space-3);
+  }
+
+  .header__brand {
+    text-decoration: none;
+    flex: none;
+    margin-inline-end: auto;
+  }
+
+  .header__links {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+  }
+
+  .header__link {
+    font-size: var(--step--1);
+    font-weight: 500;
+    color: var(--ink-dim);
+    text-decoration: none;
+    transition: color var(--dur-fast) var(--ease);
+  }
+
+  .header__link:hover,
+  .header__link[aria-current='page'] {
+    color: var(--ink);
+  }
+
+  .header__link[aria-current='page'] {
+    /* Active state is one of the few sanctioned uses of cyan. */
+    box-shadow: inset 0 -2px 0 var(--accent);
+  }
+
+  @media (max-width: 1024px) {
+    .header__inner {
+      flex-wrap: wrap;
+      row-gap: var(--space-3);
+    }
+
+    .header__brand {
+      margin-inline-end: auto;
+    }
+
+    .header__nav {
+      order: 3;
+      flex-basis: 100%;
+    }
+
+    .header__links {
+      gap: var(--space-5);
+    }
+  }
+</style>

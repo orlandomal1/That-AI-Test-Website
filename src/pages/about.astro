@@ -1,0 +1,79 @@
+---
+/**
+ * Brief §7: short. Who runs That AI, the "amplify, not replace" thesis in two paragraphs, and the
+ * fact that we build with AI ourselves and test everything we ship.
+ * No stock imagery, no team grid.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Cta from '../components/Cta.astro';
+---
+
+<BaseLayout
+  title="About"
+  description="That AI builds working AI-assisted systems for small and growth-stage operators that have real revenue and no in-house technical team."
+>
+  <div class="u-container">
+    <header class="page-header">
+      <h1>About</h1>
+    </header>
+
+    <div class="about u-measure-wide">
+      <p class="about__lead">
+        That AI Consultancy builds working AI-assisted systems for small and growth-stage operators
+        that have real revenue and no in-house technical team.
+      </p>
+
+      <p>
+        We do not replace people — we amplify them. The businesses we work with already know their
+        trade better than any software vendor does. What they lack is the layer between the platforms
+        they run and the way they actually work: the part that means a price is entered once rather
+        than twice, or that an idea can be shown to a developer rather than described to one. That
+        layer is what we build.
+      </p>
+
+      <p>
+        It follows that we are a consultancy that happens to specialise in intelligent automation,
+        not an AI startup. We are not trying to move your team onto our product. We connect what you
+        already run, we tell you when a thing cannot be built on the platforms you own, and we say so
+        before you have paid anyone to try.
+      </p>
+
+      <p>
+        We build with AI ourselves, throughout — which is why integration-grade work fits a
+        small-operator budget. That is a reason to be more careful, not less: we measure how a
+        platform actually behaves before building against it, we preview every change offline before
+        it touches a client-facing page, and we test everything we ship. Where a platform is
+        ambiguous, our systems under-match rather than guess.
+      </p>
+    </div>
+
+    <div class="cta-block">
+      <Cta />
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-header {
+    padding-block: var(--space-20) var(--space-10);
+  }
+
+  .about {
+    display: grid;
+    gap: var(--space-6);
+    color: var(--ink-dim);
+  }
+
+  .about__lead {
+    font-size: var(--step-2);
+    line-height: var(--lead-snug);
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: var(--track-snug);
+  }
+
+  .cta-block {
+    padding-block: var(--space-16) var(--section-y);
+  }
+</style>

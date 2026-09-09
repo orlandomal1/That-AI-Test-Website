@@ -1,0 +1,197 @@
+---
+/**
+ * Home. Brief §7, in order: hero (nothing else above the fold) → proof strip → how we work →
+ * services teaser → closing CTA.
+ */
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CaseCard from '../components/CaseCard.astro';
+import Cta from '../components/Cta.astro';
+import Logo from '../components/Logo.astro';
+import type { TokenContext } from '../lib/approvals';
+import { site } from '../site.config';
+
+const studies = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order);
+
+// Brief §7: three items, no icons, one sentence each, drawn from §1.
+const howWeWork = [
+  {
+    title: 'Measure before we build',
+    body: 'Real API payloads and real rendered pages, never documentation alone.',
+  },
+  {
+    title: 'Push back on scope',
+    body: 'We have killed features, deferred features, and told clients that requested features were unbuildable, before any money was spent on them.',
+  },
+  {
+    title: 'Honest about limits',
+    body: 'Where a platform is ambiguous, our systems under-match rather than guess.',
+  },
+];
+---
+
+<BaseLayout
+  title={site.name}
+  description="We build working AI-assisted systems for operators that have revenue but no tech team."
+>
+  <section class="hero">
+    <div class="u-container u-container--wide">
+      <Logo variant="long" size="var(--step-2)" decorative class="hero__lockup" />
+      <h1 class="hero__tagline">{site.tagline}</h1>
+      <p class="hero__lead">
+        We build working AI-assisted systems for operators that have revenue but no tech team.
+      </p>
+      <Cta />
+    </div>
+  </section>
+
+  <section class="u-section" aria-labelledby="proof">
+    <div class="u-container u-container--wide">
+      <h2 id="proof" class="u-visually-hidden">Selected work</h2>
+      <div class="proof">
+        {
+          studies.map((entry) => {
+            const ctx: TokenContext = { client: entry.data.clientKey, ...entry.data.tokens };
+            return (
+              <CaseCard
+                href={`/work/${entry.id}`}
+                descriptor={entry.data.h1}
+                problem={entry.data.card.problem}
+                result={entry.data.card.result}
+                ctx={ctx}
+              />
+            );
+          })
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="u-section" aria-labelledby="how">
+    <div class="u-container u-container--wide">
+      <p class="u-label">How we work</p>
+      <h2 id="how" class="section-heading">Three things that shape every engagement.</h2>
+
+      <ul class="how">
+        {
+          howWeWork.map((item) => (
+            <li class="how__item">
+              <h3 class="how__title">{item.title}</h3>
+              <p class="how__body">{item.body}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="u-section" aria-labelledby="services">
+    <div class="u-container u-container--wide">
+      <p class="u-label">Services</p>
+      <h2 id="services" class="section-heading">Two ways in.</h2>
+      <ul class="teaser">
+        <li>
+          <a href="/services#operations-automation">Operations automation</a> — connecting the
+          systems you already run so data is entered once and flows both ways.
+        </li>
+        <li>
+          <a href="/services#prototype-to-rfp">Prototype-to-RFP</a> — from app idea to branded
+          clickable demo plus developer-ready brief.
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="u-section closing">
+    <div class="u-container u-container--wide">
+      <h2 class="closing__heading">One call is enough to know whether this fits.</h2>
+      <Cta />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* Brief §7: "Nothing else above the fold." */
+  .hero {
+    display: grid;
+    align-content: center;
+    min-height: calc(100svh - var(--header-h));
+    padding-block: var(--space-16);
+  }
+
+  .hero__lockup {
+    margin-block-end: var(--space-10);
+  }
+
+  .hero__tagline {
+    font-size: var(--step-6);
+    max-width: 12ch;
+  }
+
+  .hero__lead {
+    max-width: var(--measure);
+    margin-block: var(--space-6) var(--space-10);
+    font-size: var(--step-1);
+    color: var(--ink-dim);
+  }
+
+  .proof {
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  .section-heading {
+    margin-block: var(--space-4) var(--space-10);
+    font-size: var(--step-4);
+    max-width: 20ch;
+  }
+
+  .how {
+    display: grid;
+    gap: var(--space-8);
+  }
+
+  .how__item {
+    display: grid;
+    gap: var(--space-3);
+    align-content: start;
+    padding-block-start: var(--space-5);
+    border-block-start: 2px solid var(--border-strong);
+  }
+
+  .how__title {
+    font-size: var(--step-1);
+  }
+
+  .how__body {
+    color: var(--ink-dim);
+  }
+
+  .teaser {
+    display: grid;
+    gap: var(--space-5);
+    max-width: var(--measure-wide);
+    font-size: var(--step-1);
+    color: var(--ink-dim);
+  }
+
+  .closing {
+    border-block-start: var(--border-width) solid var(--border);
+  }
+
+  .closing__heading {
+    max-width: 18ch;
+    margin-block-end: var(--space-8);
+  }
+
+  @media (min-width: 1024px) {
+    .proof {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .how {
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-6);
+    }
+  }
+</style>

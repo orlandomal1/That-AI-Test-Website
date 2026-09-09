@@ -1,0 +1,30 @@
+---
+/**
+ * Renders content-file paragraphs, resolving {token} references through the approval layer.
+ * Content never reaches the page without passing through interpolate().
+ */
+import { interpolate, type TokenContext } from '../lib/approvals';
+
+interface Props {
+  body: string[];
+  ctx: TokenContext;
+  class?: string;
+}
+
+const { body, ctx, class: className } = Astro.props;
+---
+
+<div class:list={['prose', className]}>
+  {body.map((paragraph) => <p>{interpolate(paragraph, ctx)}</p>)}
+</div>
+
+<style>
+  .prose {
+    display: grid;
+    gap: var(--space-4);
+    max-width: var(--measure-wide);
+    font-size: var(--step-0);
+    line-height: var(--lead-body);
+    color: var(--ink-dim);
+  }
+</style>

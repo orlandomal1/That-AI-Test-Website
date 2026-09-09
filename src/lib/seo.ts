@@ -25,7 +25,7 @@ export function shouldNoindex(pathname: string): boolean {
 }
 
 export const noindexedRoutes = (): string[] =>
-  Object.keys(routeGates).filter((route) => shouldNoindex(route));
+  [...Object.keys(routeGates), ...DEV_ROUTES].filter((route) => shouldNoindex(route));
 
 export const canonical = (pathname: string): string =>
   new URL(normalise(pathname), site.url).href;

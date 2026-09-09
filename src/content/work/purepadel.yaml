@@ -1,0 +1,135 @@
+order: 2
+clientKey: client_purepadel
+
+h1: "{client:sentence}"
+
+meta:
+  - label: Sector
+    value: Sport & leisure
+  - label: Engagement
+    value: Prototype-to-RFP
+  - label: Duration
+    value: 3 weeks, Aug–Sept 2026
+  - label: Status
+    value: Package delivered; agency procurement in progress
+
+stack:
+  - Lovable
+  - React
+  - Playtomic (read API)
+  - Square
+  - GoHighLevel
+
+card:
+  problem: A feature list agencies would have padded.
+  result: Now a clickable prototype and a brief they quote against.
+
+seo:
+  title: Prototype-to-RFP for {client:lower}
+  description: >-
+    How {client:lower} turned a feature list into a clickable prototype and a constraint-aware
+    developer brief that agencies can quote against.
+  ogTitle: A feature list agencies would have padded
+
+problem:
+  heading: The problem
+  body:
+    - >-
+      {client:sentence} wanted a member loyalty app and was about to send a feature list to
+      development agencies. Three problems. He couldn't show developers what he meant: a list, not a
+      product, with no screens or flows. The list was over-scoped: as written it described a loyalty
+      platform, CRM, marketing suite, EPOS integration and social layer, and some items were
+      unbuildable as specified (the booking platform's API is read-only; automated WhatsApp group
+      management isn't possible through WhatsApp's API). And with no spec or phasing, there was no
+      way to compare bids or push back on padding.
+
+visual:
+  kind: flow
+  nodes:
+    - Feature list
+    - Prototype + brief
+    - Agencies quote the right product
+  accentIndex: 1
+  screenshotGate: screenshots_purepadel
+  ariaLabel: >-
+    A feature list becomes a prototype plus a developer brief, which lets agencies quote the right
+    product.
+
+built:
+  heading: What we built
+  items:
+    - name: A clickable, branded prototype
+      body: >-
+        Built in Lovable to the client's own brand guidelines. Onboarding, home with points and
+        missions, a rewards shop with QR redemption, club pages, leaderboards, player profile,
+        check-in. Every booking action honestly represented as a deep-link to the platform members
+        already use. This became the de facto product spec.
+      replaced: a feature list.
+
+    - name: A developer brief
+      body: >-
+        To accompany the prototype in the RFP: product summary, the integration constraints agencies
+        must quote against, three-phase scope, ownership and GDPR requirements, and a non-compliance
+        clause for bids that assume write access the platform doesn't offer.
+      replaced: guesswork on both sides.
+
+    - name: A rewards economy designed from scratch
+      body: >-
+        A dual system of lifetime progression and spendable points, so the numbers in the demo add
+        up.
+
+    - name: Platform research
+      body: >-
+        Across no-code and AI-assisted build routes, matched to the actual need: a demo developers
+        can quote against, not a production app.
+
+  closing: >-
+    We built one change per prompt, reviewed screenshots at every step, and centralised all demo
+    data so the client can edit the numbers without us.
+
+howItRan:
+  heading: How it ran
+  body:
+    - >-
+      Fixed fee, deposit up front, two revision rounds defined before starting. The client supplied
+      hand sketches, brand guidelines and domain knowledge; we made the product-design decisions.
+      Two working calls, each producing a structured change list we converted into batched prompts.
+      We pushed back on scope throughout: a friends-and-messaging hub was cut, gift vouchers
+      deferred, the WhatsApp feature flagged as impossible before any agency saw it.
+
+outcomes:
+  heading: What the client has now
+  items:
+    - A published, shareable prototype that demos on a phone like a native app.
+    - A phased, constraint-aware RFP package ready to send to agencies.
+    - Two unbuildable or mispriced items caught before any agency quoted on them.
+    - A pilot metrics framework defining what the real app will be measured on.
+  footnote: Agency quotes pending; updated as procurement completes.
+
+principles:
+  lines:
+    - >-
+      The prototype shows them the feel. The brief stops them guessing at scope and padding the
+      quote.
+    - >-
+      An economy that doesn't add up undermines the whole demo. Developers will read the numbers.
+
+whoThisSuits:
+  heading: Who this suits
+  items:
+    - >-
+      Gym, fitness and racquet-sport chains buying a member app on top of an existing booking
+      platform.
+    - >-
+      Hospitality and leisure groups commissioning loyalty or booking products without an in-house
+      product team.
+    - >-
+      Any non-technical founder about to spend £30k+ with an agency on the strength of a feature
+      list.
+
+cta:
+  heading: About to send a feature list to agencies?
+  label: Book a call
+
+testimonials:
+  - quote_purepadel

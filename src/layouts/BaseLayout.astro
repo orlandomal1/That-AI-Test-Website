@@ -1,0 +1,88 @@
+---
+/**
+ * Every page renders through here, which is what makes the approval guarantees structural rather
+ * than a matter of remembering:
+ *
+ *  - `noindex` defaults to shouldNoindex(path), derived from routeGates. A page cannot forget it.
+ *  - assertPublicSafe/assertNoForbidden run over the title and description, so an unapproved client
+ *    name or a forbidden term in page metadata fails the build instead of shipping.
+ */
+import { assertNoForbidden, assertPublicSafe } from '../lib/approvals';
+import { buildTitle, canonical, ogPath, shouldNoindex } from '../lib/seo';
+import { site } from '../site.config';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import '../styles/fonts.css';
+import '../styles/tokens.css';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Override only for pages with no route gate; otherwise leave it to the config. */
+  noindex?: boolean;
+  /** Hide the site chrome, for build harnesses. */
+  bare?: boolean;
+}
+
+const { title, description, bare = false } = Astro.props;
+const path = Astro.url.pathname;
+
+assertPublicSafe(`${title} ${description}`, `<head> of ${path}`);
+assertNoForbidden(`${title} ${description}`, `<head> of ${path}`);
+
+const noindex = Astro.props.noindex ?? shouldNoindex(path);
+const fullTitle = buildTitle(title);
+const ogImage = new URL(ogPath(path), site.url).href;
+---
+
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+
+    {
+      noindex ? (
+        <meta name="robots" content="noindex, nofollow" />
+      ) : (
+        <link rel="canonical" href={canonical(path)} />
+      )
+    }
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:url" content={canonical(path)} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <link rel="preload" href="/fonts/dm-sans-800.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin />
+    <link
+      rel="preload"
+      href="/fonts/ibm-plex-mono-400.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+  </head>
+
+  <body>
+    {!bare && <a class="u-skip-link" href="#main">Skip to content</a>}
+    {!bare && <SiteHeader />}
+
+    <main id="main">
+      <slot />
+    </main>
+
+    {!bare && <SiteFooter />}
+  </body>
+</html>

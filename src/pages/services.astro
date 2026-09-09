@@ -1,0 +1,194 @@
+---
+/**
+ * Brief §7: two offerings, same structure each — one-line definition, "typical engagement"
+ * paragraph (structure, no prices), "you're a fit if" bullets, link to the anchoring case study.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Cta from '../components/Cta.astro';
+
+const services = [
+  {
+    id: 'operations-automation',
+    name: 'Operations automation for operators',
+    definition:
+      'Connecting the systems you already run so data is entered once and flows both ways.',
+    engagement:
+      'Fixed price, split into phases, each invoiced on sign-off. We start by measuring how your platforms actually behave — real API calls against throwaway objects, not documentation. Few meetings: a kick-off, a mid-build walkthrough, a demo. Commercial decisions get batched into short written decision lists rather than calls. You own the content and the conventions; everything technical is ours.',
+    fit: [
+      'The same information is entered into two systems, and every revision means editing both.',
+      'Booking, payment or customer data gets retyped by hand from one platform into another.',
+      'You have real revenue and no in-house technical team.',
+    ],
+    caseHref: '/work/halcyon',
+    caseLabel: 'See how this worked for a travel operator',
+  },
+  {
+    id: 'prototype-to-rfp',
+    name: 'Prototype-to-RFP',
+    definition: 'From app idea to branded clickable demo plus developer-ready brief.',
+    engagement:
+      'Fixed fee, deposit up front, revision rounds agreed before we start. You supply sketches, brand guidelines and domain knowledge; we make the product-design decisions. Working calls produce structured change lists rather than open-ended feedback. Where a feature is unbuildable on your existing platforms, we find that out and say so before an agency ever quotes on it.',
+    fit: [
+      'You are about to send a feature list to development agencies.',
+      'You cannot show a developer what you mean, because there are no screens or flows yet.',
+      'You have no way to compare bids or push back on padding.',
+    ],
+    caseHref: '/work/purepadel',
+    caseLabel: 'See how this worked for a sport and leisure operator',
+  },
+];
+---
+
+<BaseLayout
+  title="Services"
+  description="Operations automation for operators, and prototype-to-RFP. Two engagement shapes for businesses with revenue and no in-house technical team."
+>
+  <div class="u-container u-container--wide">
+    <header class="page-header">
+      <h1>Services</h1>
+      <p class="page-header__lead">
+        Two engagement shapes. Both are fixed price, and both start by measuring what your platforms
+        actually do.
+      </p>
+    </header>
+
+    {
+      services.map((service) => (
+        <section id={service.id} class="service" aria-labelledby={`${service.id}-heading`}>
+          <h2 id={`${service.id}-heading`} class="service__name">
+            {service.name}
+          </h2>
+          <p class="service__definition">{service.definition}</p>
+
+          <div class="service__detail">
+            <div>
+              <h3 class="service__label u-label">Typical engagement</h3>
+              <p class="service__body">{service.engagement}</p>
+            </div>
+
+            <div>
+              <h3 class="service__label u-label">You're a fit if</h3>
+              <ul class="service__fit">
+                {service.fit.map((item) => (
+                  <li>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          <a href={service.caseHref} class="service__case">
+            {service.caseLabel} &rarr;
+          </a>
+        </section>
+      ))
+    }
+
+    <section class="closing">
+      <p class="closing__line">
+        Not sure which you need? The first call is where we work that out.
+      </p>
+      <Cta />
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-header {
+    display: grid;
+    gap: var(--space-5);
+    padding-block: var(--space-20) var(--space-12);
+    max-width: var(--measure-wide);
+  }
+
+  .page-header__lead {
+    font-size: var(--step-1);
+    color: var(--ink-dim);
+  }
+
+  .service {
+    display: grid;
+    gap: var(--space-6);
+    padding-block: var(--space-12);
+    border-block-start: var(--border-width) solid var(--border);
+  }
+
+  .service__name {
+    font-size: var(--step-3);
+    max-width: 20ch;
+  }
+
+  .service__definition {
+    max-width: var(--measure-wide);
+    font-size: var(--step-1);
+    color: var(--ink);
+  }
+
+  .service__detail {
+    display: grid;
+    gap: var(--space-8);
+    margin-block-start: var(--space-4);
+  }
+
+  .service__label {
+    margin-block-end: var(--space-3);
+  }
+
+  .service__body {
+    color: var(--ink-dim);
+    max-width: var(--measure);
+  }
+
+  .service__fit {
+    display: grid;
+    gap: var(--space-3);
+    max-width: var(--measure);
+    color: var(--ink-dim);
+  }
+
+  .service__fit li {
+    position: relative;
+    padding-inline-start: var(--space-6);
+  }
+
+  .service__fit li::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0;
+    inset-block-start: 0.62em;
+    width: var(--space-3);
+    height: 2px;
+    background: var(--accent);
+  }
+
+  .service__case {
+    justify-self: start;
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    letter-spacing: var(--track-mono);
+    text-decoration: none;
+  }
+
+  .closing {
+    display: grid;
+    justify-items: start;
+    gap: var(--space-6);
+    padding-block: var(--space-16) var(--section-y);
+    border-block-start: var(--border-width) solid var(--border);
+  }
+
+  .closing__line {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--step-2);
+    letter-spacing: var(--track-snug);
+    color: var(--ink);
+    max-width: 24ch;
+  }
+
+  @media (min-width: 1024px) {
+    .service__detail {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-12);
+    }
+  }
+</style>

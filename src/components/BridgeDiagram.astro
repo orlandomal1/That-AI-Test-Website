@@ -1,0 +1,320 @@
+---
+/**
+ * The one diagram component. Brief §4: "two boxes for the two systems, the cyan bridge bar as the
+ * connector, echoing the symbol. This is the one place where the logo's metaphor and the work
+ * coincide."
+ *
+ * API is an ordered list of nodes plus the links between them (always nodes.length - 1), so the
+ * two-box before/after and the three-stage flow are the same component with different data rather
+ * than two modes.
+ *
+ * Rendering is deliberately hybrid: node boxes are HTML so their text wraps, stays selectable and
+ * scales with the type ramp; only the connectors are SVG. Text baked into a fixed viewBox would
+ * either overflow or shrink illegibly at 375px.
+ *
+ * Connector geometry is imported from logo-geometry so the bridge is literally the logo's bar.
+ */
+import { BAR_STROKE, DOT_RADIUS, SYMBOL_DRAWN_HEIGHT } from '../lib/logo-geometry';
+
+export type ConnectorVariant = 'bridge' | 'manual' | 'arrow';
+export type FlowDirection = 'right' | 'left' | 'both' | 'none';
+
+export interface BridgeNode {
+  label: string;
+  sublabel?: string;
+  tone?: 'default' | 'accent';
+}
+
+export interface BridgeLink {
+  variant: ConnectorVariant;
+  direction: FlowDirection;
+  labels?: { text: string; direction: 'right' | 'left' }[];
+}
+
+interface Props {
+  nodes: BridgeNode[];
+  links: BridgeLink[];
+  eyebrow?: string;
+  caption?: string;
+  /** Required. The SVG connectors are aria-hidden, so this carries the whole meaning. */
+  ariaLabel: string;
+}
+
+const { nodes, links, eyebrow, caption, ariaLabel } = Astro.props;
+
+if (links.length !== nodes.length - 1) {
+  throw new Error(
+    `[BridgeDiagram] ${nodes.length} nodes needs ${nodes.length - 1} links, got ${links.length}.`,
+  );
+}
+
+// Connector viewBox. Height matches the symbol's so bar weight and dot radius carry over exactly.
+const VB_W = 120;
+const VB_H = SYMBOL_DRAWN_HEIGHT;
+const MID = VB_H / 2;
+const INSET = DOT_RADIUS;
+
+// Nodes share the free space; connectors take only their intrinsic width.
+const columns = nodes.map(() => 'minmax(0, 1fr)').join(' auto ');
+---
+
+<figure class="diagram" role="img" aria-label={ariaLabel}>
+  {eyebrow && <p class="diagram__eyebrow u-label">{eyebrow}</p>}
+
+  <div class="diagram__track" style={`--columns:${columns};`}>
+    {
+      nodes.map((node, i) => (
+        <>
+          <div class:list={['node', { 'node--accent': node.tone === 'accent' }]}>
+            <span class="node__label">{node.label}</span>
+            {node.sublabel && <span class="node__sublabel">{node.sublabel}</span>}
+          </div>
+
+          {
+            i < links.length && (
+              <div class:list={['link', `link--${links[i].variant}`]}>
+                {links[i].labels?.map((l) => (
+                  <span class:list={['link__label', `link__label--${l.direction}`]}>
+                    {l.direction === 'left' && <span aria-hidden="true">&larr;&nbsp;</span>}
+                    {l.text}
+                    {l.direction === 'right' && <span aria-hidden="true">&nbsp;&rarr;</span>}
+                  </span>
+                ))}
+
+                <svg
+                  class="link__svg"
+                  viewBox={`0 0 ${VB_W} ${VB_H}`}
+                  preserveAspectRatio="xMidYMid meet"
+                  fill="none"
+                  aria-hidden="true"
+                  focusable="false"
+                >
+                  {links[i].variant === 'bridge' && (
+                    <>
+                      <path
+                        d={`M ${INSET} ${MID} H ${VB_W - INSET}`}
+                        stroke="var(--accent)"
+                        stroke-width={BAR_STROKE}
+                        stroke-linecap="butt"
+                      />
+                      <circle cx={INSET} cy={MID} r={DOT_RADIUS} fill="var(--accent)" />
+                      <circle cx={VB_W - INSET} cy={MID} r={DOT_RADIUS} fill="var(--accent)" />
+                    </>
+                  )}
+
+                  {links[i].variant === 'manual' && (
+                    <path
+                      d={`M ${INSET} ${MID} H ${VB_W - INSET}`}
+                      stroke="var(--ink-muted)"
+                      stroke-width={BAR_STROKE / 2}
+                      stroke-dasharray="10 8"
+                      stroke-linecap="round"
+                    />
+                  )}
+
+                  {links[i].variant === 'arrow' && (
+                    <path
+                      d={`M ${INSET} ${MID} H ${VB_W - INSET}`}
+                      stroke="var(--border-strong)"
+                      stroke-width={BAR_STROKE / 2}
+                      stroke-linecap="round"
+                    />
+                  )}
+
+                  {/*
+                    Arrowheads, but never on the bridge: an arrowhead sits exactly where the
+                    terminal dot goes and would erase the one detail that makes this the logo.
+                    Bridge direction is carried by the flow labels' arrows instead.
+                  */}
+                  {links[i].variant !== 'bridge' &&
+                    (links[i].direction === 'right' || links[i].direction === 'both') && (
+                    <path
+                      d={`M ${VB_W - INSET - 16} ${MID - 11} L ${VB_W - INSET} ${MID} L ${VB_W - INSET - 16} ${MID + 11}`}
+                      stroke="var(--ink-muted)"
+                      stroke-width={BAR_STROKE}
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      fill="none"
+                    />
+                  )}
+
+                  {links[i].variant !== 'bridge' &&
+                    (links[i].direction === 'left' || links[i].direction === 'both') && (
+                    <path
+                      d={`M ${INSET + 16} ${MID - 11} L ${INSET} ${MID} L ${INSET + 16} ${MID + 11}`}
+                      stroke="var(--ink-muted)"
+                      stroke-width={BAR_STROKE}
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      fill="none"
+                    />
+                  )}
+                </svg>
+              </div>
+            )
+          }
+        </>
+      ))
+    }
+  </div>
+
+  {caption && <figcaption class="diagram__caption">{caption}</figcaption>}
+</figure>
+
+<style>
+  .diagram {
+    margin: 0;
+    /*
+     * Respond to the column we sit in, not the viewport — the case-study visual lives inside a
+     * measure-constrained column, so a viewport media query would reflow at the wrong moment.
+     */
+    container-type: inline-size;
+  }
+
+  .diagram__eyebrow {
+    margin-block-end: var(--space-4);
+  }
+
+  .diagram__track {
+    display: grid;
+    align-items: center;
+    gap: var(--space-2);
+    /* Alternating "minmax(0,1fr) auto" — nodes flex, connectors do not. */
+    grid-template-columns: var(--columns);
+  }
+
+  .node {
+    display: grid;
+    gap: var(--space-2);
+    min-width: 0;
+    padding: var(--space-5);
+    background: var(--surface-2);
+    border: var(--border-width) solid var(--border);
+    border-radius: var(--radius-md);
+  }
+
+  .node--accent {
+    border-color: var(--border-accent);
+    background: var(--accent-wash);
+  }
+
+  .node__label {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--step-0);
+    line-height: var(--lead-snug);
+    letter-spacing: var(--track-snug);
+    color: var(--ink);
+    text-wrap: balance;
+  }
+
+  .node__sublabel {
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    letter-spacing: var(--track-mono);
+    color: var(--ink-muted);
+  }
+
+  /*
+   * Labels sit in normal flow, one row above the bar and one below, rather than absolutely
+   * positioned. That way the connector column sizes to fit its longest label and the text can
+   * never ride over the node boxes.
+   */
+  .link {
+    display: grid;
+    /*
+     * Label rows are reserved whether or not this link has labels, so a labelled diagram and an
+     * unlabelled one sitting side by side (before/after) align their node boxes on the same axis.
+     */
+    grid-template-rows: var(--space-5) auto var(--space-5);
+    justify-items: center;
+    align-items: center;
+    gap: var(--space-2);
+    padding-inline: var(--space-3);
+  }
+
+  .link__svg {
+    grid-row: 2;
+    width: clamp(4.5rem, 17cqi, 9rem);
+    height: auto;
+    overflow: visible;
+  }
+
+  .link__label {
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    letter-spacing: var(--track-mono);
+    color: var(--ink-muted);
+    white-space: nowrap;
+  }
+
+  .link__label--right {
+    grid-row: 1;
+  }
+
+  .link__label--left {
+    grid-row: 3;
+  }
+
+  /*
+   * Reflow to vertical inside narrow columns. The connector is ROTATED rather than stretched, so
+   * the terminal dots stay circular and the bar keeps its weight. Rotating also turns "flows right"
+   * into "flows down", which matches the new reading order without changing the data.
+   */
+  /*
+   * 460px, not 640px: at 640 the before/after pair goes vertical on a 1440px desktop, which loses
+   * the left-to-right reading the logo's bar is meant to echo. 460 keeps two short node boxes plus
+   * a connector horizontal on desktop and only stacks on genuinely narrow columns.
+   */
+  @container (max-width: 460px) {
+    .diagram__track {
+      grid-template-columns: minmax(0, 1fr);
+      justify-items: stretch;
+      gap: var(--space-3);
+    }
+
+    .link {
+      justify-self: start;
+      /* Rotated connector on the left, its labels stacked beside it. */
+      grid-template-rows: auto auto;
+      grid-template-columns: 4.5rem auto;
+      justify-items: start;
+      gap: var(--space-1) var(--space-4);
+      padding-inline: var(--space-6);
+    }
+
+    .link__svg {
+      grid-row: 1 / -1;
+      grid-column: 1;
+      width: 4.5rem;
+      height: 4.5rem;
+      transform: rotate(90deg);
+    }
+
+    .link__label {
+      grid-column: 2;
+    }
+
+    .link__label--right {
+      grid-row: 1;
+      align-self: end;
+    }
+
+    .link__label--left {
+      grid-row: 2;
+      align-self: start;
+    }
+
+    /* The bar is vertical here, so the label arrows should read down/up, not right/left. */
+    .link__label > span {
+      display: inline-block;
+      transform: rotate(90deg);
+    }
+  }
+
+  .diagram__caption {
+    margin-block-start: var(--space-4);
+    font-size: var(--step--1);
+    color: var(--ink-muted);
+  }
+</style>

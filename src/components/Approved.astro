@@ -1,0 +1,31 @@
+---
+/**
+ * Block-level approval gate.
+ *
+ *   <Approved name="quote_halcyon"><Quote … /></Approved>
+ *     → renders nothing at all until approved.
+ *
+ *   <Approved name="screenshots_purepadel">
+ *     <ScreenshotGrid … />
+ *     <Fragment slot="pending"><BridgeDiagram … /></Fragment>
+ *   </Approved>
+ *     → renders the pending slot until approved, then swaps to the real content.
+ *
+ * An HTML comment is emitted when nothing renders, so QA can see the slot exists and is empty
+ * rather than wondering whether the component was wired up at all.
+ */
+import { isApproved } from '../lib/approvals';
+import type { ApprovalKey } from '../site.config';
+
+interface Props {
+  name: ApprovalKey;
+}
+
+const { name } = Astro.props;
+const approved = isApproved(name);
+const hasPending = Astro.slots.has('pending');
+---
+
+{approved && <slot />}
+{!approved && hasPending && <slot name="pending" />}
+{!approved && !hasPending && <Fragment set:html={`<!-- approval pending: ${name} -->`} />}

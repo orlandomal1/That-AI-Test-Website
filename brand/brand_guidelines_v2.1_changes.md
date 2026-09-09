@@ -3,8 +3,15 @@
 **Status:** proposed, not yet incorporated. Raised during the website build, 2026-09-10.
 
 Three places where the prose in `brand_guidelines.md` (v2.0) disagrees with the approved artwork in
-this folder. In each case **the artwork is correct and the prose should be amended to match it** —
-the PNGs are the signed-off rendering, and both lockups agree with each other.
+this folder.
+
+**The default rule is that the artwork wins** — the PNGs are the signed-off rendering, and both
+lockups agree with each other, so where the document and the output disagree the output is what was
+approved. That rule governs amendments 2 and 3.
+
+**Amendment 1 is the single exception**, and is marked as such below: the specified 1.500 symbol
+ratio is the design intent, and the artwork's measured 1.484 is rendering drift, so there the spec
+overrides the artwork. Flagged explicitly so the exception is not read as inconsistency.
 
 Measurements were taken from the 1600px-wide Set 1 renders by isolating ink pixels against the
 `#0A0A0A` ground and measuring bounding boxes. Where a "unit" is quoted, it is the reference unit of
@@ -32,6 +39,11 @@ pixel (the left terminal dot's outer edge) sits at −52.8 units against a predi
 
 ## Amendment 1 — §2.2 / §2.4: state which height the 1.5× ratio applies to
 
+> **This is the one amendment where the spec overrides the artwork.** The specified **1.500** is the
+> design intent; the artwork's measured **1.484** is rendering drift and should not be treated as the
+> target. The website implements 1.500. Everywhere else in this document the artwork wins.
+
+
 **Current text (§2.4):** "The **symbol** is rendered **50% taller** than the wordmark cap height […]
 The symbol then renders at 162 reference units total height."
 
@@ -45,6 +57,9 @@ only holds for the first.
 |---|---|---|---|---|
 | `set1-dark__that-ai.png` | 271 px | 170 px | 1.594 | **1.485** |
 | `set1-dark__that-ai-consultancy.png` | 132 px | 83 px | 1.590 | **1.489** |
+
+The measured 1.484–1.489 sits about 1% under the specified 1.500 — small enough to be export
+rounding on a 271 px measurement, and not a deliberate design change. **Keep 1.500.**
 
 **Proposed wording:** "The symbol's *drawn* height — 108 reference units, measured along the arc
 centre-lines and excluding the round stroke caps — is 50% greater than the wordmark cap height.
@@ -99,6 +114,10 @@ the artwork's:
 
 Letterforms were also compared side by side at matched cap height and are identical, confirming the
 face is DM Sans Bold (700) and not the ExtraBold (800) used for display headlines.
+
+**Resolution: +57/1000 em is adopted as the v2.1 value, superseding both published figures.**
+§4 ("+80") had the right *direction* — the wordmark is wide-tracked — but the wrong magnitude.
+§4.1 ("−2") is wrong outright, in both direction and magnitude.
 
 **Proposed wording (§4.1):** "Letter-spacing: **+57/1000 em** (0.057em). Wide, not tight."
 And in the §4 table, replace "Wide tracking (+80)" with "Wide tracking — see §4.1 for the exact value."
