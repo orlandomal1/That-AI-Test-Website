@@ -12,9 +12,13 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const SRC = path.join(__dirname, '..', 'src');
 
-/** The only two files permitted to name a colour directly. */
+/** The only files permitted to name a colour directly. */
+const TOKENS_CSS = path.join(SRC, 'styles', 'tokens.css');
+const PALETTE_TS = path.join(SRC, 'lib', 'palette.ts');
+
 const ALLOWED = new Set([
-  path.join(SRC, 'styles', 'tokens.css'),
+  TOKENS_CSS,
+  PALETTE_TS,
   path.join(SRC, 'lib', 'logo-geometry.ts'),
 ]);
 
@@ -66,8 +70,29 @@ for (const file of walk(SRC)) {
   });
 }
 
+/**
+ * palette.ts exists only because satori cannot read CSS custom properties. It is a second copy of
+ * the brand colours, so check it has not drifted from tokens.css — otherwise the OG images would
+ * quietly stop matching the site.
+ */
+const tokensCss = fs.readFileSync(TOKENS_CSS, 'utf8').toLowerCase();
+for (const [, name, value] of fs.readFileSync(PALETTE_TS, 'utf8').matchAll(
+  /(\w+):\s*'(#[0-9a-fA-F]{3,8})'/g,
+)) {
+  if (!tokensCss.includes(value.toLowerCase())) {
+    violations.push({
+      file: PALETTE_TS,
+      line: 0,
+      name: 'palette drift',
+      text: value,
+      src: `PALETTE.${name} = ${value} does not appear in tokens.css`,
+    });
+  }
+}
+
 if (violations.length === 0) {
-  console.log('lint:tokens — clean. No colour literals outside tokens.css and logo-geometry.ts.');
+  console.log('lint:tokens — clean. No colour literals outside tokens.css, palette.ts and');
+  console.log('              logo-geometry.ts; palette.ts matches tokens.css.');
   process.exit(0);
 }
 

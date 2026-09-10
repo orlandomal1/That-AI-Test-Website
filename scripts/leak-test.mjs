@@ -78,15 +78,75 @@ for (const [key, entry] of Object.entries(approvals)) {
   scan(entry.default, `stale placeholder for approved ${key}`);
 }
 
+// ── 4. OG images ──────────────────────────────────────────────────────────
+// A PNG cannot be grepped, so audit the manifest the build writes of exactly what text was
+// rasterised into each image, and confirm every image actually exists.
+const MANIFEST = path.join(__dirname, '..', '.astro', 'og-titles.json');
+let ogChecked = 0;
+let ogMissing = [];
+
+if (!fs.existsSync(MANIFEST)) {
+  failures.push({
+    label: 'og manifest',
+    needle: '.astro/og-titles.json',
+    file: '(missing)',
+    context: 'Run `npm run build` first — the OG audit needs the manifest the build writes.',
+  });
+} else {
+  const ogPages = JSON.parse(fs.readFileSync(MANIFEST, 'utf8'));
+  ogChecked = ogPages.length;
+
+  for (const page of ogPages) {
+    const png = path.join(DIST, 'og', `${page.route}.png`);
+    if (!fs.existsSync(png)) ogMissing.push(`og/${page.route}.png`);
+
+    const title = page.title.toLowerCase();
+
+    for (const [key, entry] of Object.entries(approvals)) {
+      if (entry.approved) continue;
+      const secret = entry.approvedValue;
+      if (secret.length > 2 && title.includes(secret.toLowerCase())) {
+        failures.push({
+          label: `unapproved value rasterised into OG image (${key})`,
+          needle: secret,
+          file: `og/${page.route}.png`,
+          context: page.title,
+        });
+      }
+    }
+
+    for (const term of forbiddenStrings) {
+      if (title.includes(term.toLowerCase())) {
+        failures.push({
+          label: 'forbidden term rasterised into OG image',
+          needle: term,
+          file: `og/${page.route}.png`,
+          context: page.title,
+        });
+      }
+    }
+  }
+
+  for (const missing of ogMissing) {
+    failures.push({
+      label: 'OG image missing',
+      needle: missing,
+      file: missing,
+      context: 'Declared in the manifest but not present in dist/.',
+    });
+  }
+}
+
 // ── Report ────────────────────────────────────────────────────────────────
 const approvedCount = Object.values(approvals).filter((e) => e.approved).length;
 const total = Object.keys(approvals).length;
 
 console.log(`leaktest — ${files.length} files in dist/, ${approvedCount}/${total} keys approved`);
 
+console.log(`leaktest — ${ogChecked} OG image(s) audited via the build manifest`);
+
 if (failures.length === 0) {
-  console.log('leaktest — clean.');
-  console.log('\nNote: OG images are PNGs and cannot be grepped. Check dist/og/*.png visually.');
+  console.log('leaktest — clean. No unapproved value, forbidden term or stale placeholder in dist/.');
   process.exit(0);
 }
 

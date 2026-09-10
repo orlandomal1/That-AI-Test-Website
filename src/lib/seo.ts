@@ -8,10 +8,10 @@ const normalise = (pathname: string): string => {
 };
 
 /**
- * Build harnesses and dashboards. Never indexed, never in the sitemap, and removed before launch
- * (see the handover README). Kept during the build so the logo overlay check is repeatable.
+ * Build harnesses and internal dashboards: never indexed, never in the sitemap, and disallowed in
+ * robots.txt. Empty at launch. Add a route here (e.g. '/approvals') if you reintroduce one.
  */
-export const DEV_ROUTES: readonly string[] = ['/logo-check', '/approvals'];
+export const DEV_ROUTES: readonly string[] = [];
 
 /**
  * The one predicate behind all three noindex surfaces: the robots meta tag (defaulted in
